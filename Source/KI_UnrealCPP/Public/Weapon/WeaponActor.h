@@ -3,8 +3,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "GameFramework/Character.h"
+#include "Player/ActionCharacter.h"
 #include "WeaponActor.generated.h"
+
 
 UCLASS()
 class KI_UNREALCPP_API AWeaponActor : public AActor
@@ -30,7 +31,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	inline void SetWeaponOwner(ACharacter* InOwner) { WeaponOwner = InOwner; }
-	TWeakObjectPtr<ACharacter> WeaponOwner = nullptr;
+	TWeakObjectPtr<AActionCharacter> WeaponOwner = nullptr;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh = nullptr;

@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Player/ResourceComponent.h"
 #include "Weapon/WeaponActor.h"
+#include "StatusComponent.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
@@ -30,6 +31,8 @@ AActionCharacter::AActionCharacter()
 	bUseControllerRotationYaw = false;	// 컨트롤러의 Yaw 회전 사용 안함
 	GetCharacterMovement()->bOrientRotationToMovement = true;	// 이동 방향으로 캐릭터 회전
 	GetCharacterMovement()->RotationRate = FRotator(0, 360, 0);
+
+	Status = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -209,4 +212,13 @@ void AActionCharacter::SpendRunStamina(float DeltaTime)
 	}
 
 	//GetWorld()->GetFirstPlayerController()->GetHUD();
+}
+
+float AActionCharacter::GetAttackPower() 
+{
+	if (Status)
+	{
+		return Status->GetAttackPower();
+	}
+	return 0.0f;
 }

@@ -10,6 +10,7 @@ class UInputAction;
 //class USpringArmComponent;
 class UResourceComponent;
 //class UAnimNotifyState_SectionJump;
+class UStatusComponent;
 
 UCLASS()
 class KI_UNREALCPP_API AActionCharacter : public ACharacter
@@ -134,4 +135,11 @@ private:
 
 	// 콤보가 가능한 상황인지 확인하기 위한 플래그
 	bool bComboReady = false;
+
+	protected:
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Status")
+		TObjectPtr<UStatusComponent> Status = nullptr;
+
+	public:
+		float GetAttackPower();
 };
