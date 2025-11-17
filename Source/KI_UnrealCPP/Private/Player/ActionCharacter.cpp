@@ -117,10 +117,13 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AActionCharacter::OnAttackEnable(bool bEnable)
 {
+	
 	if (CurrentWeapon.IsValid())
 	{
 		CurrentWeapon->AttackEnable(bEnable);
 	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("OnAttackEnable: %s"), bEnable ? TEXT("True") : TEXT("False"));
 }
 
 void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)

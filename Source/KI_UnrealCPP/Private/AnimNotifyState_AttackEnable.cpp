@@ -6,19 +6,23 @@
 
 void UAnimNotifyState_AttackEnable::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
+	
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
 	if(!OwnerCharacter.IsValid())
 	{
 		OwnerCharacter = Cast<AActionCharacter>(MeshComp->GetOwner());
+		
 	}
 	
 	if (OwnerCharacter.IsValid())
 	{
 		OwnerCharacter->OnAttackEnable(true);
+		
 	}
 
-	// UE_LOG(LogTemp, Log, TEXT("Notify Address : %p"), this);
+	UE_LOG(LogTemp, Log, TEXT("Notify Address : %p"), this);
+	UE_LOG(LogTemp, Warning, TEXT("NotifyBegin / NotifyEnd called"));
 }
 
 void UAnimNotifyState_AttackEnable::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)

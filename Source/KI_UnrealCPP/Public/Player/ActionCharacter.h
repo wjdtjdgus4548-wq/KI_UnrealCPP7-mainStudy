@@ -142,4 +142,10 @@ private:
 
 	public:
 		float GetAttackPower();
+
+		//UPROPERTY()
+		//AWeaponActor* CurrentWeapon = nullptr;
+
+	public:
+	//void OnAttackEnable(bool bEnable);
 };

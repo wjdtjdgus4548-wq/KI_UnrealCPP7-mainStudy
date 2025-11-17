@@ -12,6 +12,8 @@ class KI_UNREALCPP_API AWeaponActor : public AActor
 {
 	GENERATED_BODY()
 
+	
+
 public:
 	// Sets default values for this actor's properties
 	AWeaponActor();
@@ -19,9 +21,16 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
 	UFUNCTION()
-	void OnWeaponBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	void OnWeaponBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+	
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -30,7 +39,8 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	UFUNCTION(BlueprintCallable)
-	inline void SetWeaponOwner(ACharacter* InOwner) { WeaponOwner = InOwner; }
+	inline void SetWeaponOwner(AActionCharacter* InOwner) { WeaponOwner = InOwner; }
+
 	TWeakObjectPtr<AActionCharacter> WeaponOwner = nullptr;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -46,7 +56,8 @@ protected:
 	TSubclassOf<UDamageType> DamageType = nullptr;
 	
 
+
 private:
-	
+	bool bAttackCollisionActive = false;
 
 };
