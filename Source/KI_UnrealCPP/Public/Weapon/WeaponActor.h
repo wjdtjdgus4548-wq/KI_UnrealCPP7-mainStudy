@@ -1,63 +1,66 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Player/ActionCharacter.h"
 #include "WeaponActor.generated.h"
 
+// ====== 전방 선언 ======
+class AActionCharacter;
+class USkeletalMeshComponent;
+class UCapsuleComponent;
+class UNiagaraComponent;
 
 UCLASS()
 class KI_UNREALCPP_API AWeaponActor : public AActor
 {
-	GENERATED_BODY()
-
-	
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
-	AWeaponActor();
+    AWeaponActor();
+
+    USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
+    UNiagaraComponent* GetNiagaraComp() const { return NiagaraComp; }
+
+    UFUNCTION(BlueprintCallable)
+    void AttackEnable(bool bEnable);
+
+    virtual void PostInitializeComponents() override;
+
+    UFUNCTION(BlueprintCallable)
+    inline void SetWeaponOwner(AActionCharacter* InOwner) { WeaponOwner = InOwner; }
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	UFUNCTION()
-	void OnWeaponBeginOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult
-	);
-	
+    virtual void BeginPlay() override;
 
-public:
-	UFUNCTION(BlueprintCallable)
-	void AttackEnable(bool bEnable);
+    UFUNCTION()
+    void OnWeaponBeginOverlap(
+        UPrimitiveComponent* OverlappedComponent,
+        AActor* OtherActor,
+        UPrimitiveComponent* OtherComp,
+        int32 OtherBodyIndex,
+        bool bFromSweep,
+        const FHitResult& SweepResult
+    );
 
-	virtual void PostInitializeComponents() override;
+    // ====== 컴포넌트 ======
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    TObjectPtr<USkeletalMeshComponent> WeaponMesh = nullptr;
 
-	UFUNCTION(BlueprintCallable)
-	inline void SetWeaponOwner(AActionCharacter* InOwner) { WeaponOwner = InOwner; }
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    TObjectPtr<UCapsuleComponent> WeaponCollision = nullptr;
 
-	TWeakObjectPtr<AActionCharacter> WeaponOwner = nullptr;
-protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<USkeletalMeshComponent> WeaponMesh = nullptr;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    TObjectPtr<UNiagaraComponent> NiagaraComp = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<class UCapsuleComponent> WeaponCollision = nullptr;
+    // ====== 데이터 ======
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+    float Damage = 10.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
-	float Damage = 10.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+    TSubclassOf<UDamageType> DamageType = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
-	TSubclassOf<UDamageType> DamageType = nullptr;
-	
+    // ====== 내부 상태 ======
+    TWeakObjectPtr<AActionCharacter> WeaponOwner = nullptr;
 
-
-private:
-	bool bAttackCollisionActive = false;
-
+    bool bAttackCollisionActive = false;
 };

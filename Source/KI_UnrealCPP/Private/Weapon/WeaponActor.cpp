@@ -8,6 +8,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/ActionCharacter.h"
+#include "NiagaraComponent.h"
 #include "StatusComponent.h"
 
 
@@ -68,13 +69,16 @@ AWeaponActor::AWeaponActor()
 	WeaponCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Collision"));
 	WeaponCollision->SetupAttachment(WeaponMesh);
 
-	// 🔽 디버그용 크게 열어두기
+	// 디버그용
 	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	WeaponCollision->SetCollisionObjectType(ECC_WorldDynamic);
 	WeaponCollision->SetCollisionResponseToAllChannels(ECR_Overlap);  // ← 일단 전부 오버랩
 	WeaponCollision->SetGenerateOverlapEvents(true);
 
-	
+	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
+	NiagaraComp->SetupAttachment(WeaponMesh);
+	NiagaraComp->bAutoActivate = true;
+	NiagaraComp->SetRelativeLocation(FVector::ZeroVector);
 }
 
 

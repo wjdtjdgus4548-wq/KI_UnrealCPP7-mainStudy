@@ -12,6 +12,8 @@ class UResourceComponent;
 //class UAnimNotifyState_SectionJump;
 class UStatusComponent;
 
+class AWeaponPickUp;
+
 UCLASS()
 class KI_UNREALCPP_API AActionCharacter : public ACharacter
 {
@@ -20,7 +22,7 @@ class KI_UNREALCPP_API AActionCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AActionCharacter();
-
+	void OnPickUpEnhancedWeapon(AWeaponPickUp* PickUP);
 
 protected:
 	// Called when the game starts or when spawned
@@ -121,8 +123,21 @@ protected:
 	TSubclassOf<class AWeaponActor> WeaponClass;
 
 	// 플레이어가 현재 가지고 있는 무기
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
-	TWeakObjectPtr<class AWeaponActor> CurrentWeapon = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	AWeaponActor* BaseWeapon = nullptr; //기본무기
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	AWeaponActor* CurrentWeapon = nullptr; // 현재 무기
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	AWeaponActor* EnhancedWeapon = nullptr; //강화무기
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	bool bUsingEnhancedWeapon = false; //강화무기 사용중?
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	int32 EnhancedMaxUses = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	int32 EnhancedRemainingUses = 0;
+
+
 
 	
 private:

@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Player/ResourceComponent.h"
 #include "Weapon/WeaponActor.h"
+#include "Weapon/WeaponPickUp.h"
 #include "StatusComponent.h"
 
 // Sets default values
@@ -79,7 +80,13 @@ void AActionCharacter::BeginPlay()
 
 			// 서로 참조 연결
 			CurrentWeapon = NewWeapon;        // TWeakObjectPtr<AWeaponActor> 라고 가정
-			NewWeapon->WeaponOwner = this;    // WeaponActor.h 에 TWeakObjectPtr<AActionCharacter> WeaponOwner; 있다고 가정
+			NewWeapon->SetWeaponOwner(this);    // WeaponActor.h 에 TWeakObjectPtr<AActionCharacter> WeaponOwner; 있다고 가정
+
+			BaseWeapon = CurrentWeapon;
+			EnhancedWeapon = nullptr;
+			bUsingEnhancedWeapon = false;
+			EnhancedMaxUses = 0;
+			EnhancedRemainingUses = 0;
 		}
 	}
 
@@ -118,7 +125,7 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AActionCharacter::OnAttackEnable(bool bEnable)
 {
 	
-	if (CurrentWeapon.IsValid())
+	if (CurrentWeapon)
 	{
 		CurrentWeapon->AttackEnable(bEnable);
 	}
@@ -224,4 +231,61 @@ float AActionCharacter::GetAttackPower()
 		return Status->GetAttackPower();
 	}
 	return 0.0f;
+}
+void AActionCharacter::OnPickUpEnhancedWeapon(AWeaponPickUp* Pickup)
+{
+	
+
+	if (!Pickup || !Pickup->WeaponClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Pickup or WeaponClass is null"));
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("1"));
+	if (!BaseWeapon && CurrentWeapon)
+	{
+		BaseWeapon = CurrentWeapon;
+	}
+	
+	FActorSpawnParameters Params;
+	Params.Owner = this;
+	Params.Instigator = this;
+
+	AWeaponActor* NewEnhanced = GetWorld()->SpawnActor<AWeaponActor>(
+		Pickup->WeaponClass,
+		FVector::ZeroVector,
+		FRotator::ZeroRotator,
+		Params);
+
+	const FName SocketName = TEXT("hand_r_Socket");
+
+	FAttachmentTransformRules Rules(
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		true);
+	NewEnhanced->AttachToComponent(GetMesh(), Rules, SocketName);
+	NewEnhanced->SetWeaponOwner(this);
+	UE_LOG(LogTemp, Warning, TEXT("2"));
+	if (BaseWeapon)
+	{
+		BaseWeapon->SetActorHiddenInGame(true);
+		BaseWeapon->SetActorEnableCollision(false);
+
+	}
+	UE_LOG(LogTemp, Warning, TEXT("3"));
+	EnhancedWeapon = NewEnhanced;
+	CurrentWeapon = NewEnhanced;
+	bUsingEnhancedWeapon = true;
+
+	if (Pickup->CurrentUses >= 0)
+	{
+		EnhancedRemainingUses = Pickup->CurrentUses;
+	}
+	else
+	{
+		EnhancedRemainingUses = Pickup->MaxUses;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Enhanced picked: %s, RemainingUses=%d"),
+		*NewEnhanced->GetName(), EnhancedRemainingUses);
 }
