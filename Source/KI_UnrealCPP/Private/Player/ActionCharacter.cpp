@@ -16,6 +16,8 @@ AActionCharacter::AActionCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+	SetActorTickEnabled(true);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -40,6 +42,8 @@ AActionCharacter::AActionCharacter()
 void AActionCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+
 
 	if (GetMesh())
 	{
@@ -119,7 +123,16 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			});
 		enhanced->BindAction(IA_Roll, ETriggerEvent::Triggered, this, &AActionCharacter::OnRollInput);
 		enhanced->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &AActionCharacter::OnAttackInput);
+		if (IA_DropItem)
+		{
+			enhanced->BindAction(IA_DropItem, ETriggerEvent::Started, this, &AActionCharacter::DropWeapon);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("IA_DropItem 이 BP에서 설정 안 되어 있음"));
+		}
 	}
+	
 }
 
 void AActionCharacter::OnAttackEnable(bool bEnable)
@@ -131,6 +144,11 @@ void AActionCharacter::OnAttackEnable(bool bEnable)
 	}
 	
 	UE_LOG(LogTemp, Warning, TEXT("OnAttackEnable: %s"), bEnable ? TEXT("True") : TEXT("False"));
+
+	if (bEnable)
+	{
+		ConsumeEnhancedWeaponUse();
+	}
 }
 
 void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
@@ -246,6 +264,14 @@ void AActionCharacter::OnPickUpEnhancedWeapon(AWeaponPickUp* Pickup)
 	{
 		BaseWeapon = CurrentWeapon;
 	}
+	if (bUsingEnhancedWeapon && CurrentWeapon && CurrentWeapon != BaseWeapon)
+	{
+		CurrentWeapon->AttackEnable(false);
+
+		CurrentWeapon->Destroy();
+		CurrentWeapon = nullptr;
+		bUsingEnhancedWeapon = false;
+	}
 	
 	FActorSpawnParameters Params;
 	Params.Owner = this;
@@ -288,4 +314,124 @@ void AActionCharacter::OnPickUpEnhancedWeapon(AWeaponPickUp* Pickup)
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Enhanced picked: %s, RemainingUses=%d"),
 		*NewEnhanced->GetName(), EnhancedRemainingUses);
+
+	
+}
+//강화 무기 공격 횟수 구현
+void AActionCharacter::ConsumeEnhancedWeaponUse()
+{
+	// 현재 들고있는 무기가 강화 무기가 아니라면
+	if (!bUsingEnhancedWeapon)
+	{
+		return;
+	}
+	//남은 사용 횟수가 0이하라면 
+	if (EnhancedRemainingUses <= 0)
+	{
+		return;
+	}
+	EnhancedRemainingUses = EnhancedRemainingUses - 1;
+	UE_LOG(LogTemp, Warning, TEXT("강화무기 남은 공격 횟수 : %d"), EnhancedRemainingUses);
+
+	// 다썼으면 이제 기본 무기로 가야지
+	if (EnhancedRemainingUses <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("강화무기 남은 공격 횟수가 없습니다 : 기본무기 변환"));
+		if (CurrentWeapon && CurrentWeapon != BaseWeapon)
+		{
+			CurrentWeapon->AttackEnable(false);
+			CurrentWeapon->Destroy();
+			CurrentWeapon = nullptr;
+		}
+
+		if (BaseWeapon)
+		{
+			BaseWeapon->SetActorHiddenInGame(false);
+			BaseWeapon->SetActorEnableCollision(true);
+			CurrentWeapon = BaseWeapon;
+		}
+		bUsingEnhancedWeapon = false;
+		
+
+	}
+}
+
+void AActionCharacter::DropWeapon()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DropWeapon 호출됨"));
+
+	// 1) 강화 무기 안 들고 있으면 바로 리턴
+	if (!bUsingEnhancedWeapon || !EnhancedWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: 강화 무기 없음"));
+		return;
+	}
+
+	// 2) 드롭용 픽업 베이스 클래스 체크 (BP_WeaponPickUp_Base)
+	if (!WeaponPickupClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: WeaponPickupClass 없음 (BP에서 설정 안 됨)"));
+		return;
+	}
+
+	// 3) 스폰 위치: 캐릭터 앞 + 살짝 위
+	const FVector Forward = GetActorForwardVector();
+	const FVector SpawnLocation =
+		GetActorLocation()
+		+ Forward * 150.0f            // 👉 앞으로 많이 띄워서 캐릭터랑 안 겹치게
+		+ FVector(0.0f, 0.0f, 50.0f); // 위로 조금
+
+	const FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters Params;
+	Params.Owner = this;
+
+	// 4) 픽업 액터 스폰
+	AWeaponPickUp* DroppedPickup = GetWorld()->SpawnActor<AWeaponPickUp>(
+		WeaponPickupClass,
+		SpawnLocation,
+		SpawnRotation,
+		Params
+	);
+
+	if (!DroppedPickup)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: 픽업 스폰 실패"));
+		return;
+	}
+	//드롭직후 무기세팅
+	DroppedPickup->WeaponClass = EnhancedWeapon->GetClass();
+	DroppedPickup->CurrentUses = EnhancedRemainingUses;
+
+	//외형갱신
+	DroppedPickup->RefreshVisualFromWeaponClass();
+
+	UE_LOG(LogTemp, Warning, TEXT("DropWeapon: 픽업 스폰 성공: %s"), *DroppedPickup->GetName());
+
+	// 5) 이 픽업이 어떤 무기인지 + 남은 사용횟수 전달
+	DroppedPickup->WeaponClass = EnhancedWeapon->GetClass();
+	DroppedPickup->CurrentUses = EnhancedRemainingUses;
+
+	UE_LOG(LogTemp, Warning, TEXT("DropWeapon: WeaponClass = %s, Remaining=%d"),
+		*EnhancedWeapon->GetClass()->GetName(),
+		EnhancedRemainingUses);
+
+	// 6) (일단 테스트용으로) 강화무기만 없애고, 기본무기로 복귀
+	EnhancedWeapon->Destroy();
+	EnhancedWeapon = nullptr;
+	bUsingEnhancedWeapon = false;
+	EnhancedRemainingUses = 0;
+
+	if (BaseWeapon)
+	{
+		CurrentWeapon = BaseWeapon;
+		BaseWeapon->SetActorHiddenInGame(false);
+		BaseWeapon->SetActorEnableCollision(false);
+	}
+	else
+	{
+		CurrentWeapon = nullptr;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("DropWeapon: 드롭 완료, 기본 무기로 복귀"));
 }

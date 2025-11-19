@@ -22,7 +22,7 @@ public:
 	AWeaponPickUp();
 	
 	
-
+	void RefreshVisualFromWeaponClass();
 
 protected:
 	//겹침 감지
@@ -73,9 +73,62 @@ protected:
 
 	);
 
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+
+	//마크같이 무기 세우기, 위아래로 움직임 , 오른쪽으로 회전시키기부분
+
+protected:
+	
+
+	//시작 위치 저장
+	FVector StartLocation;
+
+	//시간 누적
+	float RunningTime = 0.0f;
+
+	//위 아래로 움직이는 크기
+	UPROPERTY(EditAnywhere, Category = "Floating")
+	float BobAmplitude = 20.0f;
+
+	//위 아래로 움직이는 속도
+	UPROPERTY(EditAnywhere, Category = "Floating")
+	float BobSpeed = 2.0f;
+
+	// 회전속도
+	UPROPERTY(EditAnywhere, Category = "Flaoting")
+	float RotationSpeed = 45.0f;
+
+	UPROPERTY(EditAnywhere,Category = "Flaoting")
+	float TiltRoll = 0.0f; // 좌우 기울기
+	UPROPERTY(EditAnywhere,Category = "Flaoting")
+	float TiltPitch = -25.0f; // 앞뒤로 살짝 숙이기
+
+
+protected:
+	//흡입 가능 체크
+	bool bIsAbsorbing = false;
+
+	//타겟 캐릭터
+	TWeakObjectPtr<class AActionCharacter> TargetCharacter = nullptr;
+
+	//흡입시간, 시작위치
+	FVector AbsorbStartLocation;
+	float AbsorbElapsedTime = 0.0f;
+
+	//흡입하는데 걸리는 시간
+	UPROPERTY(EditAnywhere, Category = "Absorb")
+	float AbsorbDuration = 0.25f;
+
+	//플레이어의 몸통 쯤으로 빨려들어가게 오프셋
+	UPROPERTY(EditAnywhere, Category = "Absorb")
+	float AbsorbHeightOffset = 50.0f;
+
+
 
 	
 

@@ -62,6 +62,7 @@ protected:
 	// 걷기 모드 설정(다이나믹 델리게이트에 바인드하기 위해 UFUNCTION 추가)
 	UFUNCTION()
 	void SetWalkMode();
+	void DropWeapon();
 
 private:
 	// 콤보용 섹션 점프 함수
@@ -87,6 +88,8 @@ protected:
 	TObjectPtr<UInputAction> IA_Roll = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Attack = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_DropItem;
 
 	// 달리기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
@@ -136,6 +139,11 @@ protected:
 	int32 EnhancedMaxUses = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	int32 EnhancedRemainingUses = 0;
+	
+	void ConsumeEnhancedWeaponUse();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	TSubclassOf<AWeaponPickUp> WeaponPickupClass;
 
 
 

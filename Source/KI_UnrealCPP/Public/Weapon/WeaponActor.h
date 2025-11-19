@@ -20,6 +20,7 @@ public:
 
     USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
     UNiagaraComponent* GetNiagaraComp() const { return NiagaraComp; }
+    TSubclassOf<class AWeaponPickUp> GetPickupClass() const { return PickupClass; }
 
     UFUNCTION(BlueprintCallable)
     void AttackEnable(bool bEnable);
@@ -28,6 +29,9 @@ public:
 
     UFUNCTION(BlueprintCallable)
     inline void SetWeaponOwner(AActionCharacter* InOwner) { WeaponOwner = InOwner; }
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+    TSubclassOf<class AWeaponPickUp> PickupClass;
 
 protected:
     virtual void BeginPlay() override;
@@ -41,6 +45,7 @@ protected:
         bool bFromSweep,
         const FHitResult& SweepResult
     );
+
 
     // ====== 컴포넌트 ======
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
