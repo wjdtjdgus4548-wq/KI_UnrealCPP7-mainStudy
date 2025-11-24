@@ -9,6 +9,11 @@
 /**
  * 
  */
+
+class UTextBlock;
+class UBorder;
+class UImage;
+
 UCLASS()
 class KI_UNREALCPP_API UMainHudWidget : public UUserWidget
 {
@@ -25,4 +30,36 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
 	TWeakObjectPtr<class UResourceBarWidget> StaminaBar;
+	//퀵 슬롯 1번칸
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UBorder> Slot0_Border;
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UTextBlock> Slot0_CountText;
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UImage> Image_Slot0;
+
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UBorder> Slot1_Border;
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UTextBlock> Slot1_CountText;
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UImage> Image_Slot1;
+
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UBorder> Slot2_Border;
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UTextBlock> Slot2_CountText;
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UImage> Image_Slot2;
+
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UBorder> Slot3_Border;
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UTextBlock> Slot3_CountText;
+	UPROPERTY(meta = (BindWiget))
+	TObjectPtr<UImage> Image_Slot3;
+
+public:
+	void UpdateQuickSlot(int32 SlotIndex, int32 Stack, bool bSelected);
+	void UpdateQuickSlotIcon(int32 SlotIndex, UTexture2D* Icon);
 };

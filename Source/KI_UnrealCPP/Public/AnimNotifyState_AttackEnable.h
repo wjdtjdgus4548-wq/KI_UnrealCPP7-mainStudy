@@ -3,7 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NiagaraSystem.h"
+#include "NiagaraComponent.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
+#include "Player/ActionCharacter.h"
 #include "AnimNotifyState_AttackEnable.generated.h"
 
 /**
@@ -25,7 +28,20 @@ public:
 		USkeletalMeshComponent* MeshComp,
 		UAnimSequenceBase* Animation,
 		const FAnimNotifyEventReference& EventReference) override;
+protected:
+	// 소유자 캐릭터
+	TWeakObjectPtr<AActionCharacter> OwnerCharacter;
+	// 칼궤적 나이아가라 에셋
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AttackTail")
+	UNiagaraSystem* SwordTrailSystem = nullptr;
+
+	//실제로 스폰된 나이아가라 컴포넌트
+	TWeakObjectPtr<UNiagaraComponent> SpawnedTrail;
+
+	//붙일 소켓 이름
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AttackTrail")
+	FName TrailSocketName = TEXT("TrailSocket");
 
 private:
-	TWeakObjectPtr<class AActionCharacter> OwnerCharacter = nullptr;
+	
 };

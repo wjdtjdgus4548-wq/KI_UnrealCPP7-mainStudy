@@ -10,6 +10,7 @@
 #include "Weapon/WeaponActor.h"
 #include "Weapon/WeaponPickUp.h"
 #include "StatusComponent.h"
+#include "UI/MainHudWidget.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
@@ -36,6 +37,10 @@ AActionCharacter::AActionCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0, 360, 0);
 
 	Status = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
+
+	QuickSlotIDs.SetNum(4);
+
+	
 }
 
 // Called when the game starts or when spawned
@@ -43,7 +48,21 @@ void AActionCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
 
+	if (HUDWidgetClass)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		if (PC)
+		{
+			HUDWidget = CreateWidget<UMainHudWidget>(PC, HUDWidgetClass);
+			if (HUDWidget)
+			{
+				HUDWidget->AddToViewport();
+			}
+		}
+	}
+	
 
 	if (GetMesh())
 	{
@@ -91,11 +110,52 @@ void AActionCharacter::BeginPlay()
 			bUsingEnhancedWeapon = false;
 			EnhancedMaxUses = 0;
 			EnhancedRemainingUses = 0;
+
+
 		}
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("BeginPlay: HUD 생성 시도"));
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC && HUDWidgetClass)
+	{
+		HUDWidget = CreateWidget<UMainHudWidget>(PC, HUDWidgetClass);
+		if (HUDWidget)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("HUDWidget 생성 완료! Viewport 추가"));
+			HUDWidget->AddToViewport();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("HUDWidget 생성 실패..."));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("HUDWidgetClass 또는 PlayerController NULL"));
+	}
+
+}
+void AActionCharacter::OnQuickSlot1(const FInputActionValue& Value)
+{
+	SelectQuickSlot(0); // 0번 슬롯
 }
 
+void AActionCharacter::OnQuickSlot2(const FInputActionValue& Value)
+{
+	SelectQuickSlot(1); // 1번 슬롯
+}
+
+void AActionCharacter::OnQuickSlot3(const FInputActionValue& Value)
+{
+	SelectQuickSlot(2); // 2번 슬롯
+}
+
+void AActionCharacter::OnQuickSlot4(const FInputActionValue& Value)
+{
+	SelectQuickSlot(3); // 3번 슬롯
+}
 // Called every frame
 void AActionCharacter::Tick(float DeltaTime)
 {
@@ -123,14 +183,12 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			});
 		enhanced->BindAction(IA_Roll, ETriggerEvent::Triggered, this, &AActionCharacter::OnRollInput);
 		enhanced->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &AActionCharacter::OnAttackInput);
-		if (IA_DropItem)
-		{
-			enhanced->BindAction(IA_DropItem, ETriggerEvent::Started, this, &AActionCharacter::DropWeapon);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("IA_DropItem 이 BP에서 설정 안 되어 있음"));
-		}
+		enhanced->BindAction(IA_DropItem, ETriggerEvent::Started, this, &AActionCharacter::DropWeapon);
+		enhanced->BindAction(IA_QuickSlot1, ETriggerEvent::Started, this, &AActionCharacter::OnQuickSlot1);
+		enhanced->BindAction(IA_QuickSlot2, ETriggerEvent::Started, this, &AActionCharacter::OnQuickSlot2);
+		enhanced->BindAction(IA_QuickSlot3, ETriggerEvent::Started, this, &AActionCharacter::OnQuickSlot3);
+		enhanced->BindAction(IA_QuickSlot4, ETriggerEvent::Started, this, &AActionCharacter::OnQuickSlot4);
+		
 	}
 	
 }
@@ -260,6 +318,31 @@ void AActionCharacter::OnPickUpEnhancedWeapon(AWeaponPickUp* Pickup)
 		return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("1"));
+
+
+	if (!CurrentWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnPickUpEnhancedWeapon: CurrentWeapon is NULL"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnPickUpEnhancedWeapon: CurrentWeaponID=%s, PickupID=%s"),
+			*CurrentWeapon->WeaponID.ToString(),
+			*Pickup->WeaponID.ToString());
+	}
+
+	if (CurrentWeapon && CurrentWeapon->WeaponID == Pickup->WeaponID)
+	{
+		//같은 무기는 인벤토리에 저장 후 종료
+		AddWeaponToInventory(Pickup->WeaponID, Pickup->StackValue);
+		//인벤토리 로그
+		UE_LOG(LogTemp, Warning, TEXT(" %s 가  %d개 있음. 총 %d 개의 아이템이 존재함"),
+			*Pickup->WeaponID.ToString(),
+			Pickup->StackValue,
+			WeaponInventory[Pickup->WeaponID]);
+
+		return;
+	}
 	if (!BaseWeapon && CurrentWeapon)
 	{
 		BaseWeapon = CurrentWeapon;
@@ -399,9 +482,14 @@ void AActionCharacter::DropWeapon()
 		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: 픽업 스폰 실패"));
 		return;
 	}
+	//어떤무기 아이디인지 넘겨주기
+	DroppedPickup->WeaponID = EnhancedWeapon->WeaponID;
 	//드롭직후 무기세팅
 	DroppedPickup->WeaponClass = EnhancedWeapon->GetClass();
 	DroppedPickup->CurrentUses = EnhancedRemainingUses;
+	//스택 최대 사용횟수
+	DroppedPickup->StackValue = 1;
+	DroppedPickup->MaxUses = EnhancedWeapon->DefaultMaxUses;
 
 	//외형갱신
 	DroppedPickup->RefreshVisualFromWeaponClass();
@@ -434,4 +522,181 @@ void AActionCharacter::DropWeapon()
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("DropWeapon: 드롭 완료, 기본 무기로 복귀"));
+}
+//데미지 수신
+float AActionCharacter::TakeDamage(
+	float DamageAmount,
+	FDamageEvent const& DamageEvent,
+	AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	//기본처리
+	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	//실제로 데미지 들어가는지 확인용
+	UE_LOG(LogTemp, Warning, TEXT("AActionCharacter::TakeDamage called! Damage=%.2f"), ActualDamage);
+
+	if (Resource)
+	{
+		Resource->AddHealth(-ActualDamage);
+
+		if (!Resource->IsAlive())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("지뢰밟고 죽어버림"));
+		}
+	}
+
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("뭔가 없는데?"));
+	}
+	return ActualDamage;
+
+}
+
+void AActionCharacter::AddWeaponToInventory(FName InWeaponID, int32 Amount)
+{
+	if (Amount <= 0)
+	{
+		return;
+	}
+
+	int32& StoredAmount = WeaponInventory.FindOrAdd(InWeaponID);
+	StoredAmount += Amount;
+
+	UE_LOG(LogTemp, Warning, TEXT("Inventory [%s] = %d"), *InWeaponID.ToString(), StoredAmount);
+	ReFreshAllQuickSlotsUI();
+}
+
+void AActionCharacter::SelectQuickSlot(int32 SlotIndex)
+{
+
+	
+	if (SlotIndex < 0 || SlotIndex >= QuickSlotIDs.Num())
+	{
+		return;// 이상한 숫자가 입력되 크래쉬 되는걸 방지하는 함수
+	}
+
+	const FName WeaponID = QuickSlotIDs[SlotIndex];
+	if (WeaponID.IsNone())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("퀵슬롯이 %d 가비어있으"), SlotIndex + 1);
+		return;
+	}
+
+	int32* FoundAmount = WeaponInventory.Find(WeaponID);
+	if (!FoundAmount || *FoundAmount <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("퀵슬롯 %d: %s 재고 없음"), SlotIndex + 1, *WeaponID.ToString());
+		return;
+	}
+
+	// 지금 들고 있는 강화무기 인벤토리로 돌려놓기
+	if (bUsingEnhancedWeapon && CurrentWeapon && CurrentWeapon != BaseWeapon)
+	{
+		AddWeaponToInventory(CurrentWeapon->WeaponID, 1); // 한자루는 아이템 1개
+		CurrentWeapon->AttackEnable(false);
+		CurrentWeapon->Destroy();
+		CurrentWeapon = nullptr;
+		bUsingEnhancedWeapon = false;
+	}
+
+	// 인벤토리에서 1개 소비한다.
+	(*FoundAmount) -= 1;
+
+	//새 강화무기 스폰
+	TSubclassOf<AWeaponActor>* FoundClass = WeaponClassMap.Find(WeaponID);
+	if (!FoundClass || !(*FoundClass))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WeaponClassMap에 %s 없음"), *WeaponID.ToString());
+		return;
+	}
+
+	FActorSpawnParameters Params;
+	Params.Owner = this;
+	Params.Instigator = this;
+
+	AWeaponActor* NewEnhanced = GetWorld()->SpawnActor<AWeaponActor>
+		(*FoundClass,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			Params
+		);
+
+	if (!NewEnhanced)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("QuickSlot 스폰실패"));
+		(*FoundAmount) += 1;
+		return;
+	}
+
+	const FName SocketName = TEXT("hand_r_Socket");
+	FAttachmentTransformRules Rules(
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		true
+	);
+
+	NewEnhanced->AttachToComponent(GetMesh(), Rules, SocketName);
+	NewEnhanced->SetWeaponOwner(this);
+
+	if (BaseWeapon)
+	{
+		BaseWeapon->SetActorHiddenInGame(true);
+		BaseWeapon->SetActorEnableCollision(false);
+	}
+
+	EnhancedWeapon = NewEnhanced;
+	CurrentWeapon = NewEnhanced;
+	bUsingEnhancedWeapon = true;
+
+	EnhancedRemainingUses = NewEnhanced->DefaultMaxUses;
+
+	CurrentQuickSlotIndex = SlotIndex;
+
+	ReFreshAllQuickSlotsUI();
+}
+
+FName AActionCharacter::GetQuickSlotID(int32 SlotIndex) const
+{
+	if (SlotIndex < 0 || SlotIndex >= QuickSlotIDs.Num())
+	{
+		return NAME_None;
+	}
+		return QuickSlotIDs[SlotIndex];
+}
+
+int32 AActionCharacter::GetQuickSlotStack(int32 SlotIndex) const
+{
+	if (SlotIndex < 0 || SlotIndex >= QuickSlotIDs.Num())
+	{
+		return 0;
+	}
+
+	const FName WeaponID = QuickSlotIDs[SlotIndex];
+	if (WeaponID.IsNone())
+	{
+		return 0;
+	}
+
+	const int32* FoundAmount = WeaponInventory.Find(WeaponID);
+	return FoundAmount ? *FoundAmount : 0;
+}
+
+void AActionCharacter::ReFreshAllQuickSlotsUI()
+{
+	if (!HUDWidget)
+	{
+		return;
+	}
+
+	const int32 NumSlots = QuickSlotIDs.Num();
+
+	for (int32 i = 0; i < NumSlots; ++i)
+	{
+		const int32 Stack = GetQuickSlotStack(i);
+		const bool bSelected = (i == CurrentQuickSlotIndex);
+
+		HUDWidget->UpdateQuickSlot(i, Stack, bSelected);
+	}
 }

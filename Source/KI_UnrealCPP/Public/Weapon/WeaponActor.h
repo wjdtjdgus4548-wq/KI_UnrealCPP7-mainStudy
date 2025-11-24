@@ -33,6 +33,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
     TSubclassOf<class AWeaponPickUp> PickupClass;
 
+    //인벤토리
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+    FName WeaponID = TEXT("DefaultWeapon");
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+    int32 StackValue = 1;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+    int32 DefaultMaxUses = 10;
+
+
 protected:
     virtual void BeginPlay() override;
 
@@ -56,6 +67,9 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     TObjectPtr<UNiagaraComponent> NiagaraComp = nullptr;
+
+
+   
 
     // ====== 데이터 ======
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")

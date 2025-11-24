@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
+#include "Blueprint/UserWidget.h"
 #include "ActionCharacter.generated.h"
 
 class UInputAction;
@@ -24,9 +25,26 @@ public:
 	AActionCharacter();
 	void OnPickUpEnhancedWeapon(AWeaponPickUp* PickUP);
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<class UMainHudWidget> HUDWidgetClass;
+
+	UPROPERTY()
+	class UMainHudWidget* HUDWidget = nullptr;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapin|QuickSlot")
+	int32 GetCurrentQuickSlotIndex() const { return CurrentQuickSlotIndex; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapon|QuickSlot")
+	FName GetQuickSlotID(int32 SlotIndex) const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapon|QuickSlot")
+	int32 GetQuickSlotStack(int32 SlotIndex) const;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void ReFreshAllQuickSlotsUI();
 
 public:
 	// Called every frame
@@ -63,6 +81,13 @@ protected:
 	UFUNCTION()
 	void SetWalkMode();
 	void DropWeapon();
+	void SelectQuickSlot(int32 SlotIndex);// 인벤토리
+
+	UFUNCTION()
+	void OnQuickSlot1(const FInputActionValue& Value);
+	void OnQuickSlot2(const FInputActionValue& Value);
+	void OnQuickSlot3(const FInputActionValue& Value);
+	void OnQuickSlot4(const FInputActionValue& Value);
 
 private:
 	// 콤보용 섹션 점프 함수
@@ -70,6 +95,15 @@ private:
 
 	// 달리기용 스태미너 소비 함수
 	void SpendRunStamina(float DeltaTime);
+public:
+	// ...
+
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator,
+		AActor* DamageCauser
+	) override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
@@ -90,6 +124,18 @@ protected:
 	TObjectPtr<UInputAction> IA_Attack = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_DropItem;
+	//인벤토리 퀵슬롯
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	class UInputAction* IA_QuickSlot1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	class UInputAction* IA_QuickSlot2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	class UInputAction* IA_QuickSlot3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	class UInputAction* IA_QuickSlot4;
 
 	// 달리기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
@@ -118,6 +164,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	float AttackStaminaCost = 15.0f;
 
+	
+
 	// 플레이어가 뛰고 있는 중인지 표시 해놓은 변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|State")
 	bool bIsSprint = false;
@@ -139,6 +187,28 @@ protected:
 	int32 EnhancedMaxUses = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	int32 EnhancedRemainingUses = 0;
+
+	//무기 인벤토리
+
+	
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Inventory")
+	//무기 재고
+	TMap<FName, int32> WeaponInventory;
+
+	void AddWeaponToInventory(FName InWeaponID, int32 Amount);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	TMap<FName, TSubclassOf<AWeaponActor>> WeaponClassMap;
+
+
+	//퀵 슬롯 4칸
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	TArray<FName> QuickSlotIDs;
+
+	int32 CurrentQuickSlotIndex = -1; // -1 이면 기본무기
+	
+
 	
 	void ConsumeEnhancedWeaponUse();
 

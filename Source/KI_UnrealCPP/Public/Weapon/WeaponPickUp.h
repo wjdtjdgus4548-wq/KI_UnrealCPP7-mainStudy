@@ -47,7 +47,7 @@ public:
 
 	// 무기 타입 구분용 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	FName WeaponId = "Default";
+	FName WeaponID = "Default";
 
 	// 이 무기를 줍으면 채워줄 최대 회수
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
@@ -56,6 +56,9 @@ public:
 	// 남은 회수(드랍된 무기 다시 줍는 용도, 처음엔 -1로 두고 MaxUses 사용)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	int32 CurrentUses = -1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	int32 StackValue = 1;
 
 	
 protected:
