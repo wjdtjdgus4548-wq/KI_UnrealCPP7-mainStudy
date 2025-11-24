@@ -47,7 +47,19 @@ AActionCharacter::AActionCharacter()
 void AActionCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+	UE_LOG(LogTemp, Warning, TEXT("==== WeaponIconMap Contents ===="));
+	for (const auto& Elem : WeaponIconMap)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("IconMap Key=%s, Texture=%s"),
+			*Elem.Key.ToString(),
+			Elem.Value ? *Elem.Value->GetName() : TEXT("NULL"));
+	}
+	UE_LOG(LogTemp, Warning, TEXT("==== QuickSlotIDs ===="));
+	for (int32 i = 0; i < QuickSlotIDs.Num(); ++i)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Slot %d ID = %s"),
+			i, *QuickSlotIDs[i].ToString());
+	}
 	
 
 	if (HUDWidgetClass)
@@ -398,6 +410,8 @@ void AActionCharacter::OnPickUpEnhancedWeapon(AWeaponPickUp* Pickup)
 	UE_LOG(LogTemp, Warning, TEXT("Enhanced picked: %s, RemainingUses=%d"),
 		*NewEnhanced->GetName(), EnhancedRemainingUses);
 
+	CurrentWeaponID = Pickup->WeaponID;
+
 	
 }
 //강화 무기 공격 횟수 구현
@@ -564,6 +578,7 @@ void AActionCharacter::AddWeaponToInventory(FName InWeaponID, int32 Amount)
 	StoredAmount += Amount;
 
 	UE_LOG(LogTemp, Warning, TEXT("Inventory [%s] = %d"), *InWeaponID.ToString(), StoredAmount);
+	CurrentWeaponID = InWeaponID;
 	ReFreshAllQuickSlotsUI();
 }
 
@@ -694,9 +709,39 @@ void AActionCharacter::ReFreshAllQuickSlotsUI()
 
 	for (int32 i = 0; i < NumSlots; ++i)
 	{
+		const FName WeaponID = QuickSlotIDs[i];
 		const int32 Stack = GetQuickSlotStack(i);
-		const bool bSelected = (i == CurrentQuickSlotIndex);
+		const bool  bSelected = (i == CurrentQuickSlotIndex);
+
+		UE_LOG(LogTemp, Warning, TEXT("[UI] Slot %d - WeaponID=%s, Stack=%d, Selected=%d"),
+			i, *WeaponID.ToString(), Stack, bSelected);
 
 		HUDWidget->UpdateQuickSlot(i, Stack, bSelected);
+
+		UTexture2D* IconTex = nullptr;
+
+		if (!WeaponID.IsNone() && Stack > 0)
+		{
+			if (UTexture2D** FoundIcon = WeaponIconMap.Find(WeaponID))
+			{
+				IconTex = *FoundIcon;
+
+				UE_LOG(LogTemp, Warning, TEXT("[UI] IconMap HIT: %s -> %s"),
+					*WeaponID.ToString(),
+					IconTex ? *IconTex->GetName() : TEXT("NULL"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[UI] IconMap MISS: %s"),
+					*WeaponID.ToString());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[UI] IconMap SKIP: Slot %d, WeaponID=%s, Stack=%d"),
+				i, *WeaponID.ToString(), Stack);
+		}
+
+		HUDWidget->UpdateQuickSlotIcon(i, IconTex);
 	}
 }

@@ -31,32 +31,32 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
 	TWeakObjectPtr<class UResourceBarWidget> StaminaBar;
 	//퀵 슬롯 1번칸
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UBorder> Slot0_Border;
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> Slot0_CountText;
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> Image_Slot0;
 
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UBorder> Slot1_Border;
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> Slot1_CountText;
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> Image_Slot1;
 
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UBorder> Slot2_Border;
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> Slot2_CountText;
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> Image_Slot2;
 
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UBorder> Slot3_Border;
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> Slot3_CountText;
-	UPROPERTY(meta = (BindWiget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> Image_Slot3;
 
 public:

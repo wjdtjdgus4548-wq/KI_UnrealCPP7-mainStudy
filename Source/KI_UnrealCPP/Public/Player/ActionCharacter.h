@@ -208,12 +208,16 @@ protected:
 
 	int32 CurrentQuickSlotIndex = -1; // -1 이면 기본무기
 	
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory|Icon")
+	TMap<FName, UTexture2D*> WeaponIconMap;
 	
 	void ConsumeEnhancedWeaponUse();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	TSubclassOf<AWeaponPickUp> WeaponPickupClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FName CurrentWeaponID = "DefaultWeapon";
 
 
 
