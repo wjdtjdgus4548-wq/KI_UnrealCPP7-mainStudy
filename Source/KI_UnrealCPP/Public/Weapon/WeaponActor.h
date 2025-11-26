@@ -96,4 +96,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|AOE", meta = (ClampMin = "0.0"))
     float AOEDamage = 20.0f;  // 범위딜
+
+    //범위 공격시 카메라 흔들림 구현
+
+    UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Camera")
+    TSubclassOf<class UCameraShakeBase> AOEHitCameraShake;
 };

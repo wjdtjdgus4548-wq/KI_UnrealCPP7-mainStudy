@@ -10,6 +10,8 @@
 #include "Player/ActionCharacter.h"
 #include "NiagaraComponent.h"
 #include "StatusComponent.h"
+#include "Camera/CameraShakeBase.h" 
+#include "GameFramework/PlayerController.h"
 
 
 
@@ -175,6 +177,7 @@ void AWeaponActor::PerformAOEAttack()
 	{
 		return;
 	}
+	bool bAnyTargetHit = false;
 
 	for (const FOverlapResult& Result : Overlaps)
 	{
@@ -188,6 +191,8 @@ void AWeaponActor::PerformAOEAttack()
 		// AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(HitActor);
 		// if (!Enemy) continue;
 
+		bAnyTargetHit = true;
+
 		UE_LOG(LogTemp, Warning, TEXT("AOE 타겟: %s"), *HitActor->GetName());
 
 		UGameplayStatics::ApplyDamage(
@@ -197,6 +202,14 @@ void AWeaponActor::PerformAOEAttack()
 			this,
 			nullptr
 		);
+	}
+
+	if (bAnyTargetHit && AOEHitCameraShake && OwnerChar)
+	{
+		if (APlayerController* PC = Cast<APlayerController>(OwnerChar->GetController()))
+		{
+			PC->ClientStartCameraShake(AOEHitCameraShake);
+		}
 	}
 }
 
