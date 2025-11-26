@@ -131,3 +131,72 @@ void AWeaponActor::PostInitializeComponents()
 	//WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void AWeaponActor::PerformAOEAttack()
+{
+	if (!bUseAOE || AOERadius <= 0.0f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AOE 비활성화 상태"));
+		return;
+	}
+
+	AActionCharacter* OwnerChar = WeaponOwner.Get();
+	if (!OwnerChar)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AOE: WeaponOwner 없음"));
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	// 🔹 1) 범위 중심 위치 (임시로 무기 위치 사용)
+	//     나중에 필요하면 소켓 하나(Impact_Socket 같은 이름) 파서 써도 됨
+	const FVector Origin = GetActorLocation();
+
+	// 🔹 2) 해당 반경 안에 Pawn(적)들 찾기
+	TArray<FOverlapResult> Overlaps;
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(AOERadius);
+
+	bool bHit = World->OverlapMultiByChannel(
+		Overlaps,
+		Origin,
+		FQuat::Identity,
+		ECC_Pawn,      // Pawn 채널만
+		Sphere
+	);
+
+	// 🔹 디버그 구체(빨간색) 1초 동안
+	DrawDebugSphere(World, Origin, AOERadius, 16, FColor::Red, false, 1.0f);
+
+	UE_LOG(LogTemp, Warning, TEXT("AOE 실행! 중심=%s, 반경=%.1f, Hit=%d"),
+		*Origin.ToString(), AOERadius, bHit ? 1 : 0);
+
+	if (!bHit)
+	{
+		return;
+	}
+
+	for (const FOverlapResult& Result : Overlaps)
+	{
+		AActor* HitActor = Result.GetActor();
+		if (!HitActor || HitActor == OwnerChar || HitActor == this)
+		{
+			continue;
+		}
+
+		// TODO: 적 클래스만 맞게 필터링(예: AEnemyCharacter만)
+		// AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(HitActor);
+		// if (!Enemy) continue;
+
+		UE_LOG(LogTemp, Warning, TEXT("AOE 타겟: %s"), *HitActor->GetName());
+
+		UGameplayStatics::ApplyDamage(
+			HitActor,
+			AOEDamage,                          // 🔥 AOE 전용 데미지
+			OwnerChar->GetController(),
+			this,
+			nullptr
+		);
+	}
+}
+

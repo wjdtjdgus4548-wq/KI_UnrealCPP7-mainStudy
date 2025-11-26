@@ -33,6 +33,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
     TSubclassOf<class AWeaponPickUp> PickupClass;
 
+    UFUNCTION(BlueprintCallable, Category = "Weapon|AOE")
+    void PerformAOEAttack();
+
     //인벤토리
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
@@ -82,4 +85,15 @@ protected:
     TWeakObjectPtr<AActionCharacter> WeaponOwner = nullptr;
 
     bool bAttackCollisionActive = false;
+
+    // ====== 3타 범위공격 ======
+
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Weapon|AOE")
+    bool bUseAOE = true; // 이무기가 AOE를 쓸지 여부
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|AOE", meta = (ClampMin = "0.0"))
+    float AOERadius = 300.0f; //범위 반경
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|AOE", meta = (ClampMin = "0.0"))
+    float AOEDamage = 20.0f;  // 범위딜
 };

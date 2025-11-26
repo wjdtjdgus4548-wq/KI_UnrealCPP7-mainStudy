@@ -10,6 +10,21 @@ void UResourceBarWidget::RefreshWidget(float InCurrent, float InMax)
 	Bar->SetPercent(InCurrent / InMax);	
 	Current->SetText(FText::AsNumber(FMath::FloorToInt(InCurrent)));
 	Max->SetText(FText::AsNumber(FMath::FloorToInt(InMax)));
+
+	UE_LOG(LogTemp, Warning, TEXT("[ResourceBarWidget] RefreshWidget: %.1f / %.1f"), InCurrent, InMax);
+
+	if (Bar.IsValid())
+	{
+		Bar->SetPercent(InCurrent / InMax);
+	}
+	if (Current.IsValid())
+	{
+		Current->SetText(FText::AsNumber(FMath::FloorToInt(InCurrent)));
+	}
+	if (Max.IsValid())
+	{
+		Max->SetText(FText::AsNumber(FMath::FloorToInt(InMax)));
+	}
 }
 
 #if WITH_EDITOR

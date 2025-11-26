@@ -5,6 +5,7 @@
 #include "InputActionValue.h"
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/MainHudWidget.h"
 #include "ActionCharacter.generated.h"
 
 class UInputAction;
@@ -14,6 +15,10 @@ class UResourceComponent;
 class UStatusComponent;
 
 class AWeaponPickUp;
+
+class UMainHudWidget;
+
+class AWeaponActor;
 
 UCLASS()
 class KI_UNREALCPP_API AActionCharacter : public ACharacter
@@ -25,11 +30,11 @@ public:
 	AActionCharacter();
 	void OnPickUpEnhancedWeapon(AWeaponPickUp* PickUP);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	TSubclassOf<class UMainHudWidget> HUDWidgetClass;
+	
 
-	UPROPERTY()
-	class UMainHudWidget* HUDWidget = nullptr;
+	
+
+	
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapin|QuickSlot")
 	int32 GetCurrentQuickSlotIndex() const { return CurrentQuickSlotIndex; }
@@ -46,6 +51,14 @@ protected:
 
 	void ReFreshAllQuickSlotsUI();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UResourceComponent* ResourceComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UMainHudWidget> HUDWidgetClass;
+	UPROPERTY()
+	TObjectPtr<UMainHudWidget> HUDWidget = nullptr;
+
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -55,6 +68,9 @@ public:
 
 	// 노티파이가 공격을 가능하게 만들라는 신호가 왔을 때 실행될 함수
 	void OnAttackEnable(bool bEnable);
+
+	// AOE
+	FORCEINLINE AWeaponActor* GetCurrentWeapon() const { return CurrentWeapon; }
 
 	UResourceComponent* GetResourceComponent() { return Resource; }
 
@@ -88,6 +104,9 @@ protected:
 	void OnQuickSlot2(const FInputActionValue& Value);
 	void OnQuickSlot3(const FInputActionValue& Value);
 	void OnQuickSlot4(const FInputActionValue& Value);
+
+	void DoGroundSlamAOE();
+
 
 private:
 	// 콤보용 섹션 점프 함수

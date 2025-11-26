@@ -2,6 +2,10 @@
 
 
 #include "UI/MainHudWidget.h"
+#include "UI/ResourceBarWidget.h"      // 🔹 추가
+#include "Player/ActionCharacter.h"    // 🔹 추가 (네 캐릭터 클래스)
+#include "Player/ResourceComponent.h"  // 🔹 추가
+#include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Border.h"
 #include "Components/Image.h"
@@ -10,7 +14,29 @@ void UMainHudWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
+    AActionCharacter* Player = Cast<AActionCharacter>(GetOwningPlayerPawn());
+
+    if (!Player)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HUDOwning 플러이어가 액션 캐릭터가 아님"))
+            return;
+    }
+
+    UResourceComponent* Resource = Player->FindComponentByClass<UResourceComponent>();
+    if (!Resource)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("[HUD] ResourceComponent를 찾을 수 없음"));
+        return;
+    }
+
+    Resource->OnHealthChanged.AddUObject(this, &UMainHudWidget::HandleHealthChanged);
+    Resource->OnStaminaChanged.AddDynamic(this, &UMainHudWidget::HandleStaminaChanged);
+
+    UE_LOG(LogTemp, Warning, TEXT("[HUD] ResourceComponent 델리게이트 바인딩 완료"));
     // 필요하면 여기서 초기화 코드 작성
+
+    HandleHealthChanged(Resource->GetCurrentHealth(), Resource->GetMaxHealth());
+    HandleStaminaChanged(Resource->GetCurrentStamina(), Resource->GetMaxStamina());
 }
 
 void UMainHudWidget::UpdateQuickSlot(int32 SlotIndex, int32 Stack, bool bSelected)
@@ -110,5 +136,25 @@ void UMainHudWidget::UpdateQuickSlotIcon(int32 SlotIndex, UTexture2D* IconTextur
     {
         // ✅ 아이콘 없으면 비우기
         TargetIcon->SetBrushFromTexture(nullptr);
+    }
+}
+
+void UMainHudWidget::HandleHealthChanged(float Current, float Max)
+{
+    UE_LOG(LogTemp, Warning, TEXT("[HUD] HandleHealthChanged: %.1f / %.1f"), Current, Max);
+
+    if (HealthBar)
+    {
+        HealthBar->RefreshWidget(Current, Max);
+    }
+}
+
+void UMainHudWidget::HandleStaminaChanged(float Current, float Max)
+{
+    UE_LOG(LogTemp, Warning, TEXT("[HUD] HandleStaminaChanged: %.1f / %.1f"), Current, Max);
+
+    if (StaminaBar)
+    {
+        StaminaBar->RefreshWidget(Current, Max);
     }
 }

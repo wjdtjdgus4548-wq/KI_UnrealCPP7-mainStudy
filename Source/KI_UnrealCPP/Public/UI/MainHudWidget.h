@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "ResourceBarWidget.h"
 #include "MainHudWidget.generated.h"
 
 /**
  * 
  */
 
+class UResourceBarWidget;
+class UResourceBarComponent;
 class UTextBlock;
 class UBorder;
 class UImage;
@@ -25,11 +28,8 @@ protected:
 	// meta = (BindWidget)
 	// 위젯 블루프린트의 변수와 이 클래스의 변수를 바인드하겠다라는 의미(=둘이 같은 거라고 설정)
 	// 위젯 블루프린트의 변수명과 이 클래스의 변수명이 반드시 같아야 한다.(대소문자도 같아야 한다)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
-	TWeakObjectPtr<class UResourceBarWidget> HealthBar;
+	
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
-	TWeakObjectPtr<class UResourceBarWidget> StaminaBar;
 	//퀵 슬롯 1번칸
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UBorder> Slot0_Border;
@@ -62,4 +62,14 @@ protected:
 public:
 	void UpdateQuickSlot(int32 SlotIndex, int32 Stack, bool bSelected);
 	void UpdateQuickSlotIcon(int32 SlotIndex, UTexture2D* Icon);
+
+	UPROPERTY(meta = (BindWidget))
+	UResourceBarWidget* HealthBar;
+	UPROPERTY(meta = (BindWidget))
+	UResourceBarWidget* StaminaBar;
+
+	void HandleHealthChanged(float Current, float Max);
+
+	UFUNCTION()
+	void HandleStaminaChanged(float Current, float Max);
 };

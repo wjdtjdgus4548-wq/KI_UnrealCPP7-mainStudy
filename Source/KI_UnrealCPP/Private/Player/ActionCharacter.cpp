@@ -6,6 +6,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
 #include "Player/ResourceComponent.h"
 #include "Weapon/WeaponActor.h"
 #include "Weapon/WeaponPickUp.h"
@@ -47,7 +49,20 @@ AActionCharacter::AActionCharacter()
 void AActionCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("==== WeaponIconMap Contents ===="));
+
+	UE_LOG(LogTemp, Warning, TEXT("비긴플레이에서 HUD생성시도"));
+
+	if (HUDWidgetClass)
+	{
+		HUDWidget = CreateWidget<UMainHudWidget>(GetWorld(), HUDWidgetClass);
+		if (HUDWidget)
+		{
+			HUDWidget->AddToViewport();
+			UE_LOG(LogTemp, Warning, TEXT("HUD 생성완료"));
+		}
+	}
+
+	
 	for (const auto& Elem : WeaponIconMap)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("IconMap Key=%s, Texture=%s"),
@@ -359,12 +374,19 @@ void AActionCharacter::OnPickUpEnhancedWeapon(AWeaponPickUp* Pickup)
 	{
 		BaseWeapon = CurrentWeapon;
 	}
+	//현제 강화무기를 쓰고있고, 현제무기를 소지하고 있고, 현제 무기가 기본무기가 아니라면 
 	if (bUsingEnhancedWeapon && CurrentWeapon && CurrentWeapon != BaseWeapon)
 	{
-		CurrentWeapon->AttackEnable(false);
 
+		AddWeaponToInventory(CurrentWeapon->WeaponID, 1);
+
+		//현제 무기는 공격 불가능으로 설정
+		CurrentWeapon->AttackEnable(false);
+		// 현제 무기 를 파괴한다.
 		CurrentWeapon->Destroy();
+		//파괴 한뒤 크래쉬 방지를 위해 널 값 넣어주고
 		CurrentWeapon = nullptr;
+		//강화무기를 사용중인가? 폴스로 바꿔라 
 		bUsingEnhancedWeapon = false;
 	}
 	
@@ -411,6 +433,18 @@ void AActionCharacter::OnPickUpEnhancedWeapon(AWeaponPickUp* Pickup)
 		*NewEnhanced->GetName(), EnhancedRemainingUses);
 
 	CurrentWeaponID = Pickup->WeaponID;
+
+	if (WeaponInventory.Contains(Pickup->WeaponID))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[DEBUG] Inventory[%s] = %d"),
+			*Pickup->WeaponID.ToString(),
+			WeaponInventory[Pickup->WeaponID]);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[DEBUG] Inventory does NOT contain key: %s"),
+			*Pickup->WeaponID.ToString());
+	}
 
 	
 }
@@ -745,3 +779,42 @@ void AActionCharacter::ReFreshAllQuickSlotsUI()
 		HUDWidget->UpdateQuickSlotIcon(i, IconTex);
 	}
 }
+
+void AActionCharacter::DoGroundSlamAOE()
+{
+	const float Radius = 300.0f;
+	const float Damage = 30.0f;
+
+	FVector Center = GetActorLocation();
+	Center += GetActorForwardVector() * 150.0f;
+	Center.Z = GetActorLocation().Z;
+
+	TArray<AActor*> IgnoreActors;
+	IgnoreActors.Add(this);
+
+	UGameplayStatics::ApplyRadialDamage(
+		this,				//WorldContextObject
+		Damage,				//VaseDamage
+		Center,				//Origin
+		Radius,				//DamageRadius
+		nullptr,			//DamageTypeClass
+		IgnoreActors,		
+		this,				//DamageCauser
+		GetController(),	//InstigatorController
+		true				//DoFullDamage
+
+	);
+
+	DrawDebugSphere(
+		GetWorld(),
+		Center,
+		Radius,
+		16,
+		FColor::Red,
+		false,
+		0.5f
+	);
+	UE_LOG(LogTemp, Warning, TEXT("DoGroundSlamAOE: Center=%s, Radius=%.1f"),
+		*Center.ToString(), Radius);
+}
+
