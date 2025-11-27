@@ -34,6 +34,7 @@ protected:
 	// 픽업용 나이아가라이펙트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<class UNiagaraComponent>PickUpNiagara = nullptr;
+	
 public:
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Pickup")
