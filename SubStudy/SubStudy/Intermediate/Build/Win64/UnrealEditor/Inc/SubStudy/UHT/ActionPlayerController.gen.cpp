@@ -11,6 +11,7 @@ void EmptyLinkFunctionForGeneratedCodeActionPlayerController() {}
 
 // Begin Cross Module References
 ENGINE_API UClass* Z_Construct_UClass_APlayerController();
+ENHANCEDINPUT_API UClass* Z_Construct_UClass_UInputMappingContext_NoRegister();
 SUBSTUDY_API UClass* Z_Construct_UClass_AActionPlayerController();
 SUBSTUDY_API UClass* Z_Construct_UClass_AActionPlayerController_NoRegister();
 UPackage* Z_Construct_UPackage__Script_SubStudy();
@@ -36,13 +37,24 @@ struct Z_Construct_UClass_AActionPlayerController_Statics
 		{ "IncludePath", "Player/ActionPlayerController.h" },
 		{ "ModuleRelativePath", "Public/Player/ActionPlayerController.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DefaultMappingContext_MetaData[] = {
+		{ "Category", "Input" },
+		{ "ModuleRelativePath", "Public/Player/ActionPlayerController.h" },
+	};
 #endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_DefaultMappingContext;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<AActionPlayerController>::IsAbstract,
 	};
 	static const UECodeGen_Private::FClassParams ClassParams;
 };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AActionPlayerController_Statics::NewProp_DefaultMappingContext = { "DefaultMappingContext", nullptr, (EPropertyFlags)0x0124080000000015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AActionPlayerController, DefaultMappingContext), Z_Construct_UClass_UInputMappingContext_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DefaultMappingContext_MetaData), NewProp_DefaultMappingContext_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AActionPlayerController_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AActionPlayerController_Statics::NewProp_DefaultMappingContext,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_AActionPlayerController_Statics::PropPointers) < 2048);
 UObject* (*const Z_Construct_UClass_AActionPlayerController_Statics::DependentSingletons[])() = {
 	(UObject* (*)())Z_Construct_UClass_APlayerController,
 	(UObject* (*)())Z_Construct_UPackage__Script_SubStudy,
@@ -54,11 +66,11 @@ const UECodeGen_Private::FClassParams Z_Construct_UClass_AActionPlayerController
 	&StaticCppClassTypeInfo,
 	DependentSingletons,
 	nullptr,
-	nullptr,
+	Z_Construct_UClass_AActionPlayerController_Statics::PropPointers,
 	nullptr,
 	UE_ARRAY_COUNT(DependentSingletons),
 	0,
-	0,
+	UE_ARRAY_COUNT(Z_Construct_UClass_AActionPlayerController_Statics::PropPointers),
 	0,
 	0x009002A4u,
 	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AActionPlayerController_Statics::Class_MetaDataParams), Z_Construct_UClass_AActionPlayerController_Statics::Class_MetaDataParams)
@@ -84,10 +96,10 @@ AActionPlayerController::~AActionPlayerController() {}
 struct Z_CompiledInDeferFile_FID_KI_UnrealCPP7_mainStudy_SubStudy_SubStudy_Source_SubStudy_Public_Player_ActionPlayerController_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_AActionPlayerController, AActionPlayerController::StaticClass, TEXT("AActionPlayerController"), &Z_Registration_Info_UClass_AActionPlayerController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AActionPlayerController), 1690440384U) },
+		{ Z_Construct_UClass_AActionPlayerController, AActionPlayerController::StaticClass, TEXT("AActionPlayerController"), &Z_Registration_Info_UClass_AActionPlayerController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AActionPlayerController), 745126031U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_KI_UnrealCPP7_mainStudy_SubStudy_SubStudy_Source_SubStudy_Public_Player_ActionPlayerController_h_4207985575(TEXT("/Script/SubStudy"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_KI_UnrealCPP7_mainStudy_SubStudy_SubStudy_Source_SubStudy_Public_Player_ActionPlayerController_h_3032671219(TEXT("/Script/SubStudy"),
 	Z_CompiledInDeferFile_FID_KI_UnrealCPP7_mainStudy_SubStudy_SubStudy_Source_SubStudy_Public_Player_ActionPlayerController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_KI_UnrealCPP7_mainStudy_SubStudy_SubStudy_Source_SubStudy_Public_Player_ActionPlayerController_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);

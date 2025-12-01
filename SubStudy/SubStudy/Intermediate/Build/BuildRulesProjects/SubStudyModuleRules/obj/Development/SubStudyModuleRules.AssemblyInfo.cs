@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SubStudyModuleRules")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Development")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+21bc4be08b87c420a11163cadd4652a34a37f989")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+07fc81ef88f7be9844759b6ae3cb1370356636ef")]
 [assembly: System.Reflection.AssemblyProductAttribute("SubStudyModuleRules")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SubStudyModuleRules")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

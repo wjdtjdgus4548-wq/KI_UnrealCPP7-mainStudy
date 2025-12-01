@@ -2,6 +2,7 @@
 
 
 #include "Player/ActionCharacter.h"
+#include "EnhancedInputComponent.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
@@ -29,6 +30,21 @@ void AActionCharacter::Tick(float DeltaTime)
 void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	UEnhancedInputComponent* enhanced = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+
+	if (enhanced) // 향상된 입력 컴포넌트
+	{
+		enhanced->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AActionCharacter::OnMoveInput);
+	}
+
+}
+
+void AActionCharacter::OnMoveInput(const FInputActionValue& Invalue)
+{
+	FVector2D InputDirection = Invalue.Get<FVector2D>();
+	UE_LOG(LogTemp, Log, TEXT("Dir : (%.1f, %.1f"), InputDirection.X, InputDirection.Y);
+	UE_LOG(LogTemp, Log, TEXT("Dir : (%s"), *InputDirection.ToString());
 
 }
 

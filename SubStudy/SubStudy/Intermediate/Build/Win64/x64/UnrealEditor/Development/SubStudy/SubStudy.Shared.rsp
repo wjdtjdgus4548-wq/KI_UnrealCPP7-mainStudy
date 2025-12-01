@@ -289,6 +289,9 @@
 /I "C:\KI_UnrealCPP7-mainStudy\SubStudy\SubStudy\Intermediate\Build\Win64\UnrealEditor\Inc\SubStudy\UHT"
 /I "C:\KI_UnrealCPP7-mainStudy\SubStudy\SubStudy\Source"
 /I "C:\KI_UnrealCPP7-mainStudy\SubStudy\SubStudy\Source\SubStudy\Public"
+/I "..\Plugins\EnhancedInput\Intermediate\Build\Win64\UnrealEditor\Inc\EnhancedInput\UHT"
+/I "..\Plugins\EnhancedInput\Source"
+/I "..\Plugins\EnhancedInput\Source\EnhancedInput\Public"
 /external:W0
 /external:I "ThirdParty\GuidelinesSupportLibrary\GSL-1144\include"
 /external:I "ThirdParty\RapidJSON\1.1.0"
