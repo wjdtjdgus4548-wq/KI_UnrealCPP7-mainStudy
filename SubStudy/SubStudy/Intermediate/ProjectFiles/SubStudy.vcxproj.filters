@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\SubStudy.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{F31BBDD1-B3E8-3BCC-9652-680E16935819}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\SubStudy.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\SubStudyEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\.vsconfig" />
+    <Filter Include="Source\SubStudy">
+      <UniqueIdentifier>{F7D22E62-6FB6-384B-8FEF-7A8D62A9584B}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\SubStudy\SubStudy.Build.cs">
+      <Filter>Source\SubStudy</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\SubStudy\SubStudy.cpp">
+      <Filter>Source\SubStudy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\SubStudy.h">
+      <Filter>Source\SubStudy</Filter>
+    </ClCompile>
+    <Filter Include="Source\SubStudy\Private">
+      <UniqueIdentifier>{0E2232EE-8783-30BD-881D-AAF2CE48EA34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SubStudy\Private\Player">
+      <UniqueIdentifier>{ECD70B7E-D659-3C00-88A3-5647C2772868}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SubStudy\Private\Player\ActionCharacter.cpp">
+      <Filter>Source\SubStudy\Private\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\Private\Player\ActionPlayerController.cpp">
+      <Filter>Source\SubStudy\Private\Player</Filter>
+    </ClCompile>
+    <Filter Include="Source\SubStudy\Private\Test">
+      <UniqueIdentifier>{B0F56019-E8ED-3F6D-8EE6-660B46467469}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SubStudy\Private\Test\FloatingActor.cpp">
+      <Filter>Source\SubStudy\Private\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\Private\Test\FloatingActor_Curve.cpp">
+      <Filter>Source\SubStudy\Private\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\Private\Test\TestActor.cpp">
+      <Filter>Source\SubStudy\Private\Test</Filter>
+    </ClCompile>
+    <Filter Include="Source\SubStudy\Public">
+      <UniqueIdentifier>{E0E16260-E873-3C30-83FD-88BFDD780380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SubStudy\Public\Player">
+      <UniqueIdentifier>{9D4C42BA-7F4D-3D25-A58C-707655974C1B}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SubStudy\Public\Player\ActionCharacter.h">
+      <Filter>Source\SubStudy\Public\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\Public\Player\ActionPlayerController.h">
+      <Filter>Source\SubStudy\Public\Player</Filter>
+    </ClCompile>
+    <Filter Include="Source\SubStudy\Public\Test">
+      <UniqueIdentifier>{0A8EA149-7A62-33F1-8995-3DB587BE3146}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SubStudy\Public\Test\FloatingActor.h">
+      <Filter>Source\SubStudy\Public\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\Public\Test\FloatingActor_Curve.h">
+      <Filter>Source\SubStudy\Public\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\Public\Test\TestActor.h">
+      <Filter>Source\SubStudy\Public\Test</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

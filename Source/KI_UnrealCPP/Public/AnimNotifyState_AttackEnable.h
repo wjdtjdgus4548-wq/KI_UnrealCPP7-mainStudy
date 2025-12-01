@@ -42,6 +42,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AttackTrail")
 	FName TrailSocketName = TEXT("TrailSocket");
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraShake")
+	TSubclassOf<UCameraShakeBase> CameraShakeClass;
+
 private:
 	
 };

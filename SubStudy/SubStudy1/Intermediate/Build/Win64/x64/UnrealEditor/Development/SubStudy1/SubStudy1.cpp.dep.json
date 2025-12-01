@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\ki_unrealcpp7-mainstudy\\substudy\\substudy1\\source\\substudy1\\substudy1.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\ki_unrealcpp7-mainstudy\\substudy\\substudy1\\intermediate\\build\\win64\\x64\\substudy1editor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "c:\\ki_unrealcpp7-mainstudy\\substudy\\substudy1\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\substudy1\\definitions.substudy1.h",
+            "c:\\ki_unrealcpp7-mainstudy\\substudy\\substudy1\\source\\substudy1\\substudy1.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

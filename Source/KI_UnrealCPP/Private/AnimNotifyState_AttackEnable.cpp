@@ -18,6 +18,12 @@ void UAnimNotifyState_AttackEnable::NotifyBegin(USkeletalMeshComponent* MeshComp
 	if (OwnerCharacter.IsValid())
 	{
 		OwnerCharacter->OnAttackEnable(true);
+
+		APlayerController* PC = Cast<APlayerController>(OwnerCharacter->GetController());
+		if (PC)
+		{
+			PC->ClientStartCameraShake(CameraShakeClass);
+		}
 		
 	}
 
