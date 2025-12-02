@@ -30,6 +30,9 @@
     <Filter Include="Source\SubStudy\Private\Player">
       <UniqueIdentifier>{ECD70B7E-D659-3C00-88A3-5647C2772868}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\SubStudy\Private\Player\ActionAniminstance.cpp">
+      <Filter>Source\SubStudy\Private\Player</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\SubStudy\Private\Player\ActionCharacter.cpp">
       <Filter>Source\SubStudy\Private\Player</Filter>
     </ClCompile>
@@ -54,6 +57,9 @@
     <Filter Include="Source\SubStudy\Public\Player">
       <UniqueIdentifier>{9D4C42BA-7F4D-3D25-A58C-707655974C1B}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\SubStudy\Public\Player\ActionAniminstance.h">
+      <Filter>Source\SubStudy\Public\Player</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\SubStudy\Public\Player\ActionCharacter.h">
       <Filter>Source\SubStudy\Public\Player</Filter>
     </ClCompile>

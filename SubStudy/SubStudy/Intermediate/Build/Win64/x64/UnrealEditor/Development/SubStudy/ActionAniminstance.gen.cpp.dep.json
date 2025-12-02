@@ -1,0 +1,15 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\ki_unrealcpp7-mainstudy\\substudy\\substudy\\intermediate\\build\\win64\\unrealeditor\\inc\\substudy\\uht\\actionaniminstance.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\ki_unrealcpp7-mainstudy\\substudy\\substudy\\intermediate\\build\\win64\\x64\\substudyeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.inclorderunreal5_3.h.pch",
+        "Includes": [
+            "c:\\ki_unrealcpp7-mainstudy\\substudy\\substudy\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\substudy\\definitions.substudy.h",
+            "c:\\ki_unrealcpp7-mainstudy\\substudy\\substudy\\source\\substudy\\public\\player\\actionaniminstance.h",
+            "c:\\ki_unrealcpp7-mainstudy\\substudy\\substudy\\intermediate\\build\\win64\\unrealeditor\\inc\\substudy\\uht\\actionaniminstance.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

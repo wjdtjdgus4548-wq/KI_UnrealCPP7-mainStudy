@@ -12,7 +12,7 @@
 #include "ActionPlayerController.generated.h"
 
 class UInputMappingContext; // UInputMappingContext 걍 이런놈이 있다 고 알려만줌 딱히 기능은 없음..;
-
+class UInputAction;
 /**
  * 
  */
@@ -26,8 +26,27 @@ class SUBSTUDY_API AActionPlayerController : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 
+public:
+	virtual void SetupInputComponent() override;
+
+private:
+	void OnLookInput(const FInputActionValue& Invalue);
+
+protected:	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext>DefaultMappingContext = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+
+	TObjectPtr<UInputAction> IA_Look;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Pitch")
+	float ViewPitchMin = -40;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Pitch")
+	float ViewPitchMax = 30;
+
 
 private:
 	int32 GameInputPriorty = 1;
