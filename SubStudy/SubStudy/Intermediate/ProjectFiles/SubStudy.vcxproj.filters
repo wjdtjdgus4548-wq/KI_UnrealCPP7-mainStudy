@@ -12,6 +12,18 @@
       <Filter>Source</Filter>
     </None>
     <None Include="..\..\.vsconfig" />
+    <Filter Include="Config">
+      <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
     <Filter Include="Source\SubStudy">
       <UniqueIdentifier>{F7D22E62-6FB6-384B-8FEF-7A8D62A9584B}</UniqueIdentifier>
     </Filter>
@@ -27,6 +39,12 @@
     <Filter Include="Source\SubStudy\Private">
       <UniqueIdentifier>{0E2232EE-8783-30BD-881D-AAF2CE48EA34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\SubStudy\Private\FrameWork">
+      <UniqueIdentifier>{B91D6B23-6A52-3900-BFB2-62E46FEB885B}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SubStudy\Private\FrameWork\MainHUD.cpp">
+      <Filter>Source\SubStudy\Private\FrameWork</Filter>
+    </ClCompile>
     <Filter Include="Source\SubStudy\Private\Player">
       <UniqueIdentifier>{ECD70B7E-D659-3C00-88A3-5647C2772868}</UniqueIdentifier>
     </Filter>
@@ -37,6 +55,9 @@
       <Filter>Source\SubStudy\Private\Player</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SubStudy\Private\Player\ActionPlayerController.cpp">
+      <Filter>Source\SubStudy\Private\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\Private\Player\ResourceComponent.cpp">
       <Filter>Source\SubStudy\Private\Player</Filter>
     </ClCompile>
     <Filter Include="Source\SubStudy\Private\Test">
@@ -51,9 +72,24 @@
     <ClCompile Include="..\..\Source\SubStudy\Private\Test\TestActor.cpp">
       <Filter>Source\SubStudy\Private\Test</Filter>
     </ClCompile>
+    <Filter Include="Source\SubStudy\Private\UI">
+      <UniqueIdentifier>{57D9EC29-B07D-3496-9902-DCCD9E0A39DE}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SubStudy\Private\UI\MainHudWidget.cpp">
+      <Filter>Source\SubStudy\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\Private\UI\ResourceBarWidget.cpp">
+      <Filter>Source\SubStudy\Private\UI</Filter>
+    </ClCompile>
     <Filter Include="Source\SubStudy\Public">
       <UniqueIdentifier>{E0E16260-E873-3C30-83FD-88BFDD780380}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\SubStudy\Public\FrameWork">
+      <UniqueIdentifier>{15CC3A60-40D5-38AE-95DB-54C563BEBB80}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SubStudy\Public\FrameWork\MainHUD.h">
+      <Filter>Source\SubStudy\Public\FrameWork</Filter>
+    </ClCompile>
     <Filter Include="Source\SubStudy\Public\Player">
       <UniqueIdentifier>{9D4C42BA-7F4D-3D25-A58C-707655974C1B}</UniqueIdentifier>
     </Filter>
@@ -64,6 +100,9 @@
       <Filter>Source\SubStudy\Public\Player</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SubStudy\Public\Player\ActionPlayerController.h">
+      <Filter>Source\SubStudy\Public\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\Public\Player\ResourceComponent.h">
       <Filter>Source\SubStudy\Public\Player</Filter>
     </ClCompile>
     <Filter Include="Source\SubStudy\Public\Test">
@@ -77,6 +116,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\SubStudy\Public\Test\TestActor.h">
       <Filter>Source\SubStudy\Public\Test</Filter>
+    </ClCompile>
+    <Filter Include="Source\SubStudy\Public\UI">
+      <UniqueIdentifier>{55214CA0-A22C-3E49-97D6-38D391FC0927}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SubStudy\Public\UI\MainHudWidget.h">
+      <Filter>Source\SubStudy\Public\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubStudy\Public\UI\ResourceBarWidget.h">
+      <Filter>Source\SubStudy\Public\UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

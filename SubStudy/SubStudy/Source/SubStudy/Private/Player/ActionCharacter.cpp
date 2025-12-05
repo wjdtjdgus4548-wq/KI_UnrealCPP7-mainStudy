@@ -6,6 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Player/ResourceComponent.h"
 // Sets default values
 AActionCharacter::AActionCharacter()
 {
@@ -22,9 +23,11 @@ AActionCharacter::AActionCharacter()
 	PlayerCamera->SetupAttachment(SpringArm);
 	PlayerCamera->SetRelativeRotation(FRotator(-20.0f, 0.0f, 0.0f));
 
+	Resource = CreateDefaultSubobject<UResourceComponent>(TEXT("PlayerResource"));
+
 	bUseControllerRotationYaw = false; // 컨트롤러의 yaw회전을 사용함 -> 컨트롤러의 yaw 회전을 캐릭터에 적용
 
-	//GetCharacterMovement()->bOrientRotationToMovement = true; // 이동방향으로 몸을 돌림
+	GetCharacterMovement()->bOrientRotationToMovement = true; // 이동방향으로 몸을 돌림
 	GetCharacterMovement()->RotationRate = FRotator(0, 360, 0); // 1초에 한바퀴 돌게
 
 
@@ -38,37 +41,29 @@ void AActionCharacter::BeginPlay()
 
 	AnimInstance = GetMesh()->GetAnimInstance(); // ABP 객체 가져오기
 	//시작시 리셋 시키기 안정성 up
-	CurrentStamina = MaxStamina;
+	
 
 	bIsSprint = false;
+	if (GetMesh())
+	{
+		AnimInstance = GetMesh()->GetAnimInstance();
+	}
+	if (Resource)
+	{
+		Resource->OnStaminaEmpty.AddDynamic(this, &AActionCharacter::SetWalkMode);
+	}
 }
 
 // Called every frame
 void AActionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	TimeSinceLastStaminaUse += DeltaTime;
-	if (TimeSinceLastStaminaUse > StaminaRegenCoolTime && CurrentStamina <= MaxStamina)
-	{
-		CurrentStamina = FMath::Min(CurrentStamina + StaminaRegenAmount * DeltaTime, MaxStamina);
-		
-		UE_LOG(LogTemp, Warning, TEXT("Stamina Regen : %.1f"), CurrentStamina);
-	}
+	
+	
 
-	if (bIsSprint)
+	if (bIsSprint && !GetVelocity().IsNearlyZero())
 	{
-		CurrentStamina -= SprintStaminaCost * DeltaTime;
-		//TimeSinceLastStaminaUse = 0;
-
-		StaminaRegenTimerSet();
-		
-		if (CurrentStamina <= 0)
-		{
-			CurrentStamina = 0.0f;
-			SetWalkMode();
-		}
-		UE_LOG(LogTemp, Warning, TEXT("스태미나 남은거 : %.1f"), CurrentStamina);
-			
+		Resource->AddStamina(-SprintStaminaCost * DeltaTime); // 스태미너 감소
 	}
 
 }
@@ -94,6 +89,8 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 }
 
+
+
 void AActionCharacter::OnMoveInput(const FInputActionValue& Invalue)
 {
 	FVector2D InputDirection = Invalue.Get<FVector2D>();
@@ -117,13 +114,10 @@ void AActionCharacter::OnRollInput(const FInputActionValue& Invalue)
 {
 	if (AnimInstance.IsValid())
 	{
-		if (!AnimInstance->IsAnyMontagePlaying() && CurrentStamina > RollStaminaCost)
+		if (!AnimInstance->IsAnyMontagePlaying() && Resource-> HasEnoughStamina(RollStaminaCost)) //  몽타주 재생중 아님, 충분한 스태미너가 있음
 		{
-			//SetActorRotation(GetLastMovementInputVector().Rotation()); //마지막 입력 방향으로 회전 시키기
-			CurrentStamina -= RollStaminaCost;
-			//TimeSinceLastStaminaUse = 0;
-			StaminaRegenTimerSet();
-			UE_LOG(LogTemp, Warning, TEXT("현재 스태미나 잔량 : %.1f"), CurrentStamina);
+			UE_LOG(LogTemp, Warning, TEXT("구르기 실행중"));
+			Resource->AddStamina(-RollStaminaCost);
 			PlayAnimMontage(RollMontage);
 		}
 	}
@@ -142,15 +136,4 @@ void AActionCharacter::SetWalkMode()
 	bIsSprint = false;
 }
 
-void AActionCharacter::StaminaRegenTimerSet()
-{
-
-	GetWorldTimerManager().SetTimer(
-		StaminaCoolTimer,
-		[this]() {
-			bRengenStamina = true;
-		},
-		StaminaRegenCoolTime,
-		false);
-}
 
