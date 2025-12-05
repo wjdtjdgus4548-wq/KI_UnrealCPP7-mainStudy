@@ -36,7 +36,6 @@ void UResourceComponent::BeginPlay()
 void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 {
 
-	UE_LOG(LogTemp, Warning, TEXT("World OK, setting timer..."));
 	UWorld* world = GetWorld();
 	FTimerManager& timerManager = world->GetTimerManager();
 	timerManager.SetTimer(
@@ -82,12 +81,12 @@ void UResourceComponent::StaminaRegenPerTick()
 
 void UResourceComponent::AddStamina(float InValue)
 {
-	//TimeSinceLastStaminaUse = 0; // 디버깅용; 시간 직접 제어
-
-	//스태미너를 소비하고 일정 시간 뒤에 자동재생되게 타이머 세팅
-	StaminaAutoRegenCoolTimerSet();
+	CurrentStamina += InValue;
 	
-	SetCurrentStamina(FMath::Clamp(CurrentStamina + InValue, 0, MaxStamina));
+	if (InValue < 0.0f)
+	{
+		if(UWorld*World = GetWorld())
+	}
 
 	if (CurrentStamina <= 0)
 	{
